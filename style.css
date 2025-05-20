@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
+
+*{
+    font-family: "Bungee", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+canvas{
+    position: absolute;
+    top: 0;
+}
+
+#homePage{
+    z-index: 2;
+    position: relative;
+    display: inline-flex;
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+h1{
+    color: white;
+    text-align: center;
+    font-size: 6.25vw;
+    margin-top: 5%;
+}
+
+#start{
+    font-size: 4.7vw;
+    width: 18.3vw;
+    color: white;
+    background-color: rgba(255, 255, 255, 0);
+    border: none;
+    height: 14.2vh;
+    z-index: 2;
+    background-image: url(img/platform.svg);
+    background-position: center;
+    
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+#buttons{
+    display: inline-flex;
+    flex-flow: column nowrap;
+    height:  60%;
+    width: 90%;
+    justify-content: space-evenly;
+    align-items: center;
+    z-index: 2;
+}
+
+.row{
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    width: 90%;
+}
+
+.row > button{
+    font-size: 2.2vw;
+}
+
+
+#info, #tutorial{
+    width: 14.2vw;
+    color: white;
+    background-color: rgba(255, 255, 255, 0);
+    border: none;
+    background-image: url(img/smolPlat.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 11.3vh;
+}
+
+
+
+.grass, .dirt{
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}
+
+.grass{
+    bottom: 2vh;
+}
+
+#playerOne{
+    position: absolute;
+    background-color: red;
+    
+}

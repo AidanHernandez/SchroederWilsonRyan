@@ -3,19 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Phaser Game</title>
-    <style>
-        body{
-            margin: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <section id="homePage">
+        <h1>You're  <span style="color: #ff0000">it!</span></h1>
+
+        <aside id="buttons">
+            <button id="start">Start</button>
+
+
+            <section class="row">
+                <button id="tutorial">Tutorial</button>
+
+                <button id="info">Info</button>
+            </section>
+        </aside>
+        
+        
+        <img src="img/grass.svg" alt="grass" class="grass">
+        <img src="img/dirt.svg" alt="dirt" class="dirt">
     
+        <div id="playerOne"></div>
+    
+    </section>
 
 
-   
+
+    
     <script src="js/phaser.js"></script>
     <script src="js/script.js"></script>
+    <script src="js/extra.js"></script>
 </body>
 </html>
