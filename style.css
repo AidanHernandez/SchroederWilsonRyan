@@ -46,6 +46,7 @@ h1{
     
     background-repeat: no-repeat;
     background-size: contain;
+    transition: transform 0.3s ease;
 }
 
 #buttons{
@@ -80,6 +81,7 @@ h1{
     background-repeat: no-repeat;
     background-size: contain;
     height: 11.3vh;
+    transition: transform 0.3s ease;
 }
 
 
@@ -94,4 +96,19 @@ h1{
     bottom: 2vh;
 }
 
+#start:hover, #info:hover, #tutorial:hover{
+    cursor: pointer;
+    animation: wiggle 1.5s ease-in-out infinite;
+}
 
+@keyframes wiggle {
+    0%   { transform: rotate(0deg); }
+    25%  { transform: rotate(-1deg); }
+    50%  { transform: rotate(0deg); }
+    75%  { transform: rotate(1deg); }
+    100% { transform: rotate(0deg); }
+  }
+
+#homePage.hide{
+    display: none;
+}

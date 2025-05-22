@@ -1,14 +1,21 @@
 
+
 var player;
 var stars;
 var bombs;
 var platforms;
-var cursors = null;
+var cursors;
+let cursorUse = false;
 var score = 0;
 var gameOver = false;
 var scoreText;
 var gravity = 200;
 let step = 1
+let isTouchingWallLeft = false;
+let isTouchingWallRight = false;
+let isWallSliding = false;
+let sceneChange = false;
+
 
 
 //  Base scene with shared update logic
@@ -19,15 +26,17 @@ class BaseScene extends Phaser.Scene {
 
     update() {
 
-        if (!(cursors === null)) {
-            console.log(player.x)
+        if (cursorUse) {
+
+
+
             if (cursors.left.isDown) {
-                player.setVelocityX(-160);
+                player.setVelocityX(-200);
 
                 player.anims.play('left', true);
             }
             else if (cursors.right.isDown) {
-                player.setVelocityX(160);
+                player.setVelocityX(200);
 
                 player.anims.play('right', true);
             }
@@ -40,7 +49,9 @@ class BaseScene extends Phaser.Scene {
             if (cursors.up.isDown && player.body.touching.down) {
                 player.setVelocityY(-330);
             }
-        } else {
+
+
+        } else if(cursorUse === false) {
 
 
             if (step === 1 && player.y === 929) {
@@ -79,7 +90,7 @@ class BaseScene extends Phaser.Scene {
 
             }
 
-            if(player.x <=992 && step === 4 && player.y === 929){
+            if (player.x === 992 && step === 4 && player.y === 929) {
                 step = 1
             }
 
@@ -91,7 +102,7 @@ class BaseScene extends Phaser.Scene {
                 player.anims.play('turn');
             }
         }
-
+        
 
     }
 
@@ -113,30 +124,16 @@ class StartMenu extends BaseScene {
     preload() {
         this.load.spritesheet('dude', '../phaser3-tutorial-src/assets/dude.png', { frameWidth: 32, frameHeight: 48 });
         this.load.image('startMenu', '../img/bgHome.png');
-        this.load.image('level1Bg', '../img/bgLevel1.png');
         this.load.image('ground', '../img/top.svg');
     }
 
     create() {
         this.add.image(0, 0, 'startMenu').setOrigin(0, 0);
-
         platforms = this.physics.add.staticGroup();
-
-
         platforms.create(505, innerHeight - 50, 'ground')
 
-
-
-
-
-
-
         player = this.physics.add.sprite(innerWidth, 929, 'dude');
-
-
-        player.setBounce(0.2);
         player.setCollideWorldBounds(true);
-
 
         this.anims.create({
             key: 'left',
@@ -158,40 +155,47 @@ class StartMenu extends BaseScene {
             repeat: -1
         });
 
-        // var rect = this.add.rectangle(241, 714.5, 290, 30, 0x3B561C);
-        // var rect2 = this.add.rectangle(500, 456, 290, 30, 0x3B561C);
-
         this.createPhysicsRect(241, 714.5, 290, 30, `00FFFFFF`);
         this.createPhysicsRect(765, 714.5, 290, 30, `00FFFFFF`);
         this.createPhysicsRect(505, 456, 375, 30, `00FFFFFF`);
-
-
-
-        // cursors = this.input.keyboard.createCursorKeys();
+        
+        cursorUse = false
 
         this.physics.add.collider(player, platforms);
-
     }
 }
 
-//  Level 1 Scene
-class Level1 extends BaseScene {
+
+
+class characterSelection extends BaseScene {
     constructor() {
-        super('Level1');
+        super('characterSelection');
+    }
+
+    preload() {
+       
+        this.load.image('startMenu', '../img/bgHome.png');
+        this.load.image('ground', '../img/top.svg');
     }
 
     create() {
-        this.add.image(0, 0, 'level1Bg').setOrigin(0, 0);
-        this.add.text(20, 20, 'Welcome to Level 1', {
-            font: '24px Arial',
-            fill: '#ffffff'
-        });
+        this.add.image(0, 0, 'startMenu').setOrigin(0, 0);
 
-        this.player = this.physics.add.sprite(100, 450, 'dude');
-        this.player.setBounce(0.2);
-        this.player.setCollideWorldBounds(true);
+        
+        
+        this.createPhysicsRect(0, innerHeight-25, innerWidth, 30, `0x56421C`);
 
-        this.cursors = this.input.keyboard.createCursorKeys();
+        platforms = this.physics.add.staticGroup();
+        platforms.create(505, innerHeight - 50, 'ground')
+
+
+
+
+        
+
+        cursorUse = null
+        
+        
     }
 }
 
@@ -200,15 +204,31 @@ var config = {
     type: Phaser.AUTO,
     width: innerHeight - 10,
     height: innerHeight - 10,
+    plugins: {
+        scene: [{
+            key: 'DebugBodyColorsPlugin',
+            plugin: PhaserDebugBodyColorsPlugin,
+            mapping: 'debugBodyColors'
+        }]
+    },
     physics: {
         default: 'arcade',
         arcade: {
             gravity: { y: gravity },
-            debug: false
+            debug: true
         }
     },
-    scene: [StartMenu, Level1]
+    scene: [StartMenu, characterSelection],
+
 };
 
 //  Launch game
 var game = new Phaser.Game(config);
+
+
+function changeScene(name){
+    if(name === "homePage" ){
+        document.getElementById("homePage").classList.toggle("hide");
+        game.scene.keys['StartMenu'].scene.start('characterSelection');
+    }
+}
