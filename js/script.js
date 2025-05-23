@@ -215,7 +215,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: gravity },
-            debug: true
+            debug: false
         }
     },
     scene: [StartMenu, characterSelection],
@@ -230,5 +230,6 @@ function changeScene(name){
     if(name === "homePage" ){
         document.getElementById("homePage").classList.toggle("hide");
         game.scene.keys['StartMenu'].scene.start('characterSelection');
+        document.getElementById("characterSelectMenu").classList.toggle("show");
     }
 }
