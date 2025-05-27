@@ -225,16 +225,16 @@ h1 {
     stroke: rgb(66, 66, 66);
 }
 
-#readyPlayerOne {
+#readyPlayerOne, #readyPlayerTwo{
     opacity: 0;
     transition: opacity 0.4s ease;
 }
 
-.showPlayerOne {
+.showPlayerOne, .showplayerTwo{
     opacity: 0.5 !important;
 }
 
-.playerOneSelected{
+.playerOneSelected, .playerTwoSelected{
     opacity: 1 !important;
     transition: opacity 0.4s ease;
 }
@@ -257,6 +257,7 @@ h1 {
 .arrowNoPLayer>path {
     transition: fill 0.5s ease;
     fill: rgb(255, 255, 255);
+    stroke: rgba(0, 0, 0, 0);
 }
 
 .arrowPlayerSelectingCharacter {

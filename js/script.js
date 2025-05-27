@@ -130,9 +130,9 @@ class StartMenu extends BaseScene {
     create() {
         this.add.image(0, 0, 'startMenu').setOrigin(0, 0);
         platforms = this.physics.add.staticGroup();
-        platforms.create(505, innerHeight - 50, 'ground')
+        platforms.create(505, 1018 - 50, 'ground')
 
-        player = this.physics.add.sprite(innerWidth, 929, 'dude');
+        player = this.physics.add.sprite(2048, 929, 'dude');
         player.setCollideWorldBounds(true);
 
         this.anims.create({
@@ -183,10 +183,10 @@ class characterSelection extends BaseScene {
 
         
         
-        this.createPhysicsRect(0, innerHeight-25, innerWidth, 30, `0x56421C`);
+        this.createPhysicsRect(0, 1018-25, 2048, 30, `0x56421C`);
 
         platforms = this.physics.add.staticGroup();
-        platforms.create(505, innerHeight - 50, 'ground')
+        platforms.create(505, 1018 - 50, 'ground')
 
 
 
@@ -202,8 +202,8 @@ class characterSelection extends BaseScene {
 //  Game Config
 var config = {
     type: Phaser.AUTO,
-    width: innerHeight - 10,
-    height: innerHeight - 10,
+    width: 1008,
+    height: 1008,
     plugins: {
         scene: [{
             key: 'DebugBodyColorsPlugin',
