@@ -1,40 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
 
-*{
+* {
     font-family: "Bungee", sans-serif;
     font-weight: 400;
     font-style: normal;
 }
 
-body{
+body {
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 0;
 }
 
-canvas{
+canvas {
     position: absolute;
     top: 0;
 }
 
-#homePage{
+#homePage {
     z-index: 2;
     position: relative;
     display: inline-flex;
     flex-flow: column nowrap;
     align-items: center;
-   
+
 }
 
-h1{
+h1 {
     color: white;
     text-align: center;
     font-size: 6.25vw;
     margin-top: 5%;
 }
 
-#start{
+#start {
     font-size: 4.7vw;
     width: 18.3vw;
     color: white;
@@ -44,35 +44,36 @@ h1{
     z-index: 2;
     background-image: url(img/platform.svg);
     background-position: center;
-    
+
     background-repeat: no-repeat;
     background-size: contain;
     transition: transform 0.3s ease;
 }
 
-#buttons{
+#buttons {
     display: inline-flex;
     flex-flow: column nowrap;
-    height:  60%;
+    height: 60%;
     width: 90%;
     justify-content: space-evenly;
     align-items: center;
     z-index: 2;
 }
 
-.row{
+.row {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
     width: 90%;
 }
 
-.row > button{
+.row>button {
     font-size: 2.2vw;
 }
 
 
-#info, #tutorial{
+#info,
+#tutorial {
     width: 14.2vw;
     color: white;
     background-color: rgba(255, 255, 255, 0);
@@ -87,101 +88,203 @@ h1{
 
 
 
-.grass, .dirt{
+.grass,
+.dirt {
     width: 100%;
     position: absolute;
     bottom: 0;
+
 }
 
-.grass{
+.dirt {
+    background-color: #56421C;
+
+}
+
+.grass {
     bottom: 2vh;
 }
 
-#start:hover, #info:hover, #tutorial:hover{
+#start:hover,
+#info:hover,
+#tutorial:hover {
     cursor: pointer;
     animation: wiggle 1.5s ease-in-out infinite;
 }
 
 @keyframes wiggle {
-    0%   { transform: rotate(0deg); }
-    25%  { transform: rotate(-1deg); }
-    50%  { transform: rotate(0deg); }
-    75%  { transform: rotate(1deg); }
-    100% { transform: rotate(0deg); }
-  }
+    0% {
+        transform: rotate(0deg);
+    }
 
-#homePage.hide{
+    25% {
+        transform: rotate(-1deg);
+    }
+
+    50% {
+        transform: rotate(0deg);
+    }
+
+    75% {
+        transform: rotate(1deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+#homePage.hide {
     display: none;
 }
 
 
-#keys > img{
+#keys>img {
     color: orange;
 }
 
-#characterSelectMenu{
-    
+#characterSelectMenu {
+
     display: none;
 }
 
-#characterSelectMenu.show{
+#characterSelectMenu.show {
     z-index: 2;
     position: relative;
     display: inline-flex;
     flex-flow: column nowrap;
     align-items: center;
     display: flex;
-    
+
 }
 
-#keys{
+#keys {
     display: flex;
     justify-content: space-evenly;
     position: absolute;
     width: 100%;
     left: 0;
-    bottom:20vh;
+    bottom: 20vh;
     height: 20vh;
     align-items: flex-end;
-    
+
 }
 
-#characters{
+#characters {
     display: flex;
     justify-content: space-evenly;
     position: absolute;
     width: 100%;
     left: 0;
-    bottom:45vh;
+    bottom: 45vh;
 }
 
-#wasd{
+#wasd {
+
     transition: margin-bottom 0.5s ease;
-    
+
 }
 
-.wasdOnline{
+.wasdOnline {
     margin-bottom: 5vh;
+
     transition: margin-bottom 0.5s ease;
 }
 
-.wasdOnline > rect{
-    stroke: rgba(192, 192, 192, 0.5);
+.notOnline>rect {
+    transition: stroke 0.5s ease;
+    stroke: rgb(255, 255, 255);
 }
 
-.wasdOnline > path{
-    fill: rgba(192, 192, 192, 0.5);
+.notOnline>path {
+    transition: fill 0.5s ease;
+    fill: rgb(255, 255, 255);
 }
 
-.wasdSelected{
+
+.wasdOnline>rect {
+    transition: stroke 0.5s ease;
+    stroke: rgb(168, 168, 168);
+}
+
+.wasdOnline>path {
+    transition: fill 0.5s ease;
+    fill: rgb(168, 168, 168);
+}
+
+.wasdSelected {
     margin-bottom: 8vh;
     transition: margin-bottom 0.5s ease;
 }
 
-.wasdSelected > path{
-    fill: silver;   
+.wasdSelected>path {
+    fill: rgb(66, 66, 66);
 }
 
-.wasdSelected > rect{
-    stroke: silver;
+.wasdSelected>rect {
+    stroke: rgb(66, 66, 66);
+}
+
+#readyPlayerOne {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.showPlayerOne {
+    opacity: 0.5 !important;
+}
+
+.playerOneSelected{
+    opacity: 1 !important;
+    transition: opacity 0.4s ease;
+}
+
+
+
+#arrow {
+
+    transition: margin-bottom 0.5s ease;
+
+}
+
+
+
+.arrowNoPLayer>rect {
+    transition: stroke 0.5s ease;
+    stroke: rgb(255, 255, 255);
+}
+
+.arrowNoPLayer>path {
+    transition: fill 0.5s ease;
+    fill: rgb(255, 255, 255);
+}
+
+.arrowPlayerSelectingCharacter {
+    margin-bottom: 5vh;
+    transition: margin-bottom 0.5s ease;
+
+}
+
+
+.arrowPlayerSelectingCharacter>rect {
+    transition: stroke 0.5s ease;
+    stroke: rgb(168, 168, 168);
+}
+
+.arrowPlayerSelectingCharacter>path {
+    transition: fill 0.5s ease;
+    fill: rgb(168, 168, 168);
+}
+
+.arrowPlayerLocked {
+    margin-bottom: 8vh;
+    transition: margin-bottom 0.5s ease;
+}
+
+.arrowPlayerLocked>path {
+    fill: rgb(66, 66, 66);
+}
+
+.arrowPlayerLocked>rect {
+    stroke: rgb(66, 66, 66);
 }
