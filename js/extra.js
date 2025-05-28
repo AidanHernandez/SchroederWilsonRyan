@@ -20,8 +20,8 @@ characterSelectMenu.style.height = menuSize
 
 
 let characters = [
-    ['thimble', 'tony', 'basketball god', 'hatsune miku', 'teddie'],
-    ['thimble', 'tony', 'basketball god', 'hatsune miku', 'teddie']
+    ['thimble', 'tony', 'basketballGod', 'hatsune miku', 'teddie'],
+    ['thimble', 'tony', 'basketballGod', 'hatsune miku', 'teddie']
 ]
 
 let playerOptions = []
@@ -136,7 +136,7 @@ document.addEventListener('keydown', function (event) {
 
 });
 
-['thimble', 'tony', 'basketball god', 'hatsune miku', 'teddie']
+
 
 function showCharacter(player) {
 
@@ -146,7 +146,7 @@ function showCharacter(player) {
 
 
 
-    showCharacterByName(player, character) 
+    showCharacterByName(player, character)
 
 
 
@@ -200,22 +200,40 @@ function removeCharacter(player) {
 function showCharacterByName(player, character) {
     switch (character) {
         case 'thimble':
+
             player.src = "../img/characters/thimble.png";
-            if (player = playerOne) {
-                wasd.classList.add("thimble")
+            switch (player) {
+                case playerOne:
+                    removeColors(wasd)
+                    wasd.classList.add("thimble")
+
+
+                break;
             }
             break;
         case 'tony':
             player.src = "../img/characters/tony.png";
+            if (player = playerOne) {
+                wasd.classList.add("tony")
+            }
             break;
-        case 'basketball god':
+        case 'basketballGod':
             player.src = "../img/characters/basketballgod.png";
+            if (player = playerOne) {
+                wasd.classList.add("basketball")
+            }
             break;
         case 'hatsune miku':
             player.src = "../img/characters/miku.png";
+            if (player = playerOne) {
+                wasd.classList.add("miku")
+            }
             break;
         case 'teddie':
             player.src = "../img/characters/teddie.png";
+            if (player = playerOne) {
+                wasd.classList.add("teddie")
+            }
             break;
         default:
             player.src = "../img/characters/placeholder.png";
@@ -266,4 +284,14 @@ function characterScroll(player) {
 
     // Refresh character pool without duplicates
     addPlayer();
+}
+
+['thimble', 'tony', 'basketballGod', 'hatsune miku', 'teddie']
+
+function removeColors(keys){
+    for(i = 0; i < characters[0].length; i++){
+        keys.classList.remove("thimble")
+    }
+    
+    
 }

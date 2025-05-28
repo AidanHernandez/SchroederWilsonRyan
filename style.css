@@ -202,16 +202,69 @@ h1 {
 }
 
 
-.wasdOnline.thimble>rect {
+#wasd.thimble>rect{
     transition: stroke 0.5s ease;
-    stroke: #BDC1C3
+    stroke: rgba(189, 193, 195, 0.5)
     
 }
 
-.wasdOnline.thimble>path {
+#wasd.thimble>path{
     transition: fill 0.5s ease;
-    fill: #BDC1C3
+    fill: rgba(189, 193, 195, 0.5)
 }
+
+#wasd.tony>rect{
+    transition: stroke 0.5s ease;
+    stroke: #fed5bc80
+    
+}
+
+#wasd.tony>path{
+    transition: fill 0.5s ease;
+    fill: #fed5bc80
+}
+
+#wasd.basketball>rect{
+    transition: stroke 0.5s ease;
+    stroke: #fe793280
+    
+}
+
+#wasd.basketball>path{
+    transition: fill 0.5s ease;
+    fill: #fe793280
+}
+
+#wasd.miku>rect{
+    transition: stroke 0.5s ease;
+    stroke: #95d2d380
+    
+}
+
+#wasd.miku>path{
+    transition: fill 0.5s ease;
+    fill: #95d2d380
+}
+
+#wasd.teddie>rect{
+    transition: stroke 0.5s ease;
+    stroke: #ece2cc80
+    
+}
+
+#wasd.teddie>path{
+    transition: fill 0.5s ease;
+    fill: #ece2cc80
+}
+
+
+
+
+
+
+
+
+
 
 .wasdSelected {
     margin-bottom: 8vh;
