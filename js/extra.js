@@ -25,6 +25,9 @@ let characters = [
 ]
 
 let playerOptions = []
+
+let playerIndexes = [0, 0];
+
 let characterNumber = 0;
 
 
@@ -53,6 +56,12 @@ document.addEventListener('keydown', function (event) {
                 wasd.classList.add("wasdOnline")
                 wasd.classList.remove("notOnline")
 
+            }
+            break;
+        case 'd':
+            if (playerOne.classList.contains("showPlayerOne")) {
+
+                characterScroll(playerOne)
             }
             break;
         case 's':
@@ -115,30 +124,36 @@ document.addEventListener('keydown', function (event) {
                 arrow.classList.add("arrowNoPLayer")
             }
             break;
+        case 'ArrowRight':
+            if (playerTwo.classList.contains("showplayerTwo")) {
+
+                characterScroll(playerTwo)
+            }
+            break;
     }
 
 
 
 });
+
 ['thimble', 'tony', 'basketball god', 'hatsune miku', 'teddie']
 
 function showCharacter(player) {
-    characterNumber++
+
+
     let character = characters[1][0]
 
 
 
-    if (character === 'thimble') {
-        player.src = "../img/characters/thimble.png"
-        characters[1].splice(0, 1);
-    } else if (character === 'tony') {
-        player.src = "../img/characters/tony.png"
-        characters[1].splice(0, 1);
-    }
+
+    showCharacterByName(player, character) 
+
+
 
     switch (player) {
         case playerOne:
             playerOptions[0] = character
+
             break;
         case playerTwo:
             playerOptions[1] = character
@@ -152,6 +167,14 @@ function showCharacter(player) {
 
     }
 
+    for (i = characters[1].length; i >= 0; i--) {
+
+        if (characters[1][i] === character) {
+            characters[1].splice(i, 1)
+        }
+    }
+
+    console.log(characters)
 
 }
 
@@ -160,17 +183,87 @@ function removeCharacter(player) {
 
     switch (player) {
         case playerOne:
-            characters[1].splice(0, 0, playerOptions[0]);
             playerOptions[0] = ""
-            
+
             break;
         case playerTwo:
-            characters[1].splice(0, 0, playerOptions[1]);
             playerOptions[1] = ""
+
             break;
     }
 
-    characterNumber--
+    addPlayer()
 
     player.src = "../img/characters/placeholder.png"
+}
+
+function showCharacterByName(player, character) {
+    switch (character) {
+        case 'thimble':
+            player.src = "../img/characters/thimble.png";
+            if (player = playerOne) {
+                wasd.classList.add("thimble")
+            }
+            break;
+        case 'tony':
+            player.src = "../img/characters/tony.png";
+            break;
+        case 'basketball god':
+            player.src = "../img/characters/basketballgod.png";
+            break;
+        case 'hatsune miku':
+            player.src = "../img/characters/miku.png";
+            break;
+        case 'teddie':
+            player.src = "../img/characters/teddie.png";
+            break;
+        default:
+            player.src = "../img/characters/placeholder.png";
+            break;
+    }
+}
+
+
+
+function addPlayer() {
+    // Clear current list of available characters
+    characters[1] = [];
+
+    // Re-add characters from the master list, excluding ones currently selected by players
+    for (let i = 0; i < characters[0].length; i++) {
+        const character = characters[0][i];
+        if (!playerOptions.includes(character)) {
+            characters[1].push(character);
+        }
+    }
+}
+
+
+function characterScroll(player) {
+    let playerIndex = (player === playerOne) ? 0 : 1;
+    let currentCharacter = playerOptions[playerIndex];
+
+    // Rebuild the character pool with everything
+    addPlayer();
+
+    // Remove the currently selected character from pool
+    let currentIndex = characters[1].indexOf(currentCharacter);
+    if (currentIndex !== -1) {
+        characters[1].splice(currentIndex, 1);
+    }
+
+    // Find the next character that's not taken
+    let attempts = 0;
+    do {
+        playerIndexes[playerIndex] = (playerIndexes[playerIndex] + 1) % characters[0].length;
+        var nextCharacter = characters[0][playerIndexes[playerIndex]];
+        attempts++;
+    } while (playerOptions.includes(nextCharacter) && attempts < characters[0].length);
+
+    // Assign new character
+    playerOptions[playerIndex] = nextCharacter;
+    showCharacterByName(player, nextCharacter);
+
+    // Refresh character pool without duplicates
+    addPlayer();
 }
