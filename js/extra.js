@@ -65,10 +65,17 @@ document.addEventListener('keydown', function (event) {
         case 'l': handleScroll(3, 1); break;
         case 'k': handleUnjoinOrUnlock(3); break;
 
-        case ' ': if(canStartGame()){console.log("game screen next")} break;
+        case ' ': if(canStartGame()){changeScene("mapSelection")} break;
 
     }
 });
+
+
+
+
+
+
+
 
 
 

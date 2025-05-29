@@ -181,13 +181,17 @@ h1 {
 }
 
 
-#readyPlayerOne, #readyPlayerTwo{
+#readyPlayerOne,
+#readyPlayerTwo {
     opacity: 0;
     transition: opacity 0.4s ease;
 }
 
 
-#wasd, #arrow, #tfgh, #ijkl{
+#wasd,
+#arrow,
+#tfgh,
+#ijkl {
 
     transition: margin-bottom 0.5s ease, opacity 0.5s ease;
 
@@ -205,11 +209,11 @@ h1 {
 
 
 
-.showPlayer{
+.showPlayer {
     opacity: 0.5 !important;
 }
 
-.selected{
+.selected {
     opacity: 1 !important;
     transition: opacity 0.4s ease;
 }
@@ -218,57 +222,82 @@ h1 {
 
 
 
-#wasd.thimble>rect, #arrow.thimble > rect, #tfgh.thimble > rect, #ijkl.thimble > rect{
+#wasd.thimble>rect,
+#arrow.thimble>rect,
+#tfgh.thimble>rect,
+#ijkl.thimble>rect {
     transition: stroke 0.5s ease;
     stroke: rgb(189, 193, 195)
-    
 }
 
-#wasd.thimble>path, #arrow.thimble>path, #tfgh.thimble > path, #ijkl.thimble > path{
+#wasd.thimble>path,
+#arrow.thimble>path,
+#tfgh.thimble>path,
+#ijkl.thimble>path {
     transition: fill 0.5s ease;
     fill: rgb(189, 193, 195)
 }
 
-#wasd.tony>rect, #arrow.tony > rect, #tfgh.tony > rect, #ijkl.tony > rect{
+#wasd.tony>rect,
+#arrow.tony>rect,
+#tfgh.tony>rect,
+#ijkl.tony>rect {
     transition: stroke 0.5s ease;
     stroke: #fed5bc
-    
 }
 
-#wasd.tony>path, #arrow.tony>path, #tfgh.tony > path, #ijkl.tony > path{
+#wasd.tony>path,
+#arrow.tony>path,
+#tfgh.tony>path,
+#ijkl.tony>path {
     transition: fill 0.5s ease;
     fill: #fed5bc
 }
 
-#wasd.basketballGod>rect, #arrow.basketballGod > rect, #tfgh.basketballGod > rect, #ijkl.basketballGod > rect{
+#wasd.basketballGod>rect,
+#arrow.basketballGod>rect,
+#tfgh.basketballGod>rect,
+#ijkl.basketballGod>rect {
     transition: stroke 0.5s ease;
     stroke: #fe7932
-    
 }
 
-#wasd.basketballGod>path, #arrow.basketballGod>path, #tfgh.basketballGod > path, #ijkl.basketballGod > path{
+#wasd.basketballGod>path,
+#arrow.basketballGod>path,
+#tfgh.basketballGod>path,
+#ijkl.basketballGod>path {
     transition: fill 0.5s ease;
     fill: #fe7932
 }
 
-#wasd.hatsuneMiku>rect, #arrow.hatsuneMiku > rect, #tfgh.hatsuneMiku > rect, #ijkl.hatsuneMiku > rect{
+#wasd.hatsuneMiku>rect,
+#arrow.hatsuneMiku>rect,
+#tfgh.hatsuneMiku>rect,
+#ijkl.hatsuneMiku>rect {
     transition: stroke 0.5s ease;
     stroke: #95d2d3
-    
 }
 
-#wasd.hatsuneMiku>path, #arrow.hatsuneMiku>path, #tfgh.hatsuneMiku > path, #ijkl.hatsuneMiku > path{
+#wasd.hatsuneMiku>path,
+#arrow.hatsuneMiku>path,
+#tfgh.hatsuneMiku>path,
+#ijkl.hatsuneMiku>path {
     transition: fill 0.5s ease;
     fill: #95d2d3
 }
 
-#wasd.teddie>rect, #arrow.teddie > rect, #tfgh.teddie > rect, #ijkl.teddie > rect{
+#wasd.teddie>rect,
+#arrow.teddie>rect,
+#tfgh.teddie>rect,
+#ijkl.teddie>rect {
     transition: stroke 0.5s ease;
     stroke: #ece2cc
-    
 }
 
-#wasd.teddie>path, #arrow.teddie>path, #tfgh.teddie > path, #ijkl.teddie > path{
+#wasd.teddie>path,
+#arrow.teddie>path,
+#tfgh.teddie>path,
+#ijkl.teddie>path {
     transition: fill 0.5s ease;
     fill: #ece2cc
 }
@@ -279,20 +308,68 @@ h1 {
 
 
 
-#characterSelectMenu > h2{
+#characterSelectMenu>h2 {
     color: white;
     font-size: 70px;
     margin-top: 12vh;
     background-color: black;
 }
 
+#characterSelectMenu.hide {
+    display: none;
+}
+
+
+#levelSelect {
+    display: none;
+}
+
+#levelSelect.show {
+    display: flex;
+    z-index: 2;
+}
 
 
 
 
+#levelSelect>main {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+#levelSelect>main>h2 {
+    color: white;
+    font-size: 120px;
+    margin-bottom: 5vh;
+    margin-top: 5vh;
+    text-align: center;
+}
+
+#levelSelect>main>aside>h3 {
+    color: white;
+    font-size: 64px;
+    margin: 0;
+}
+
+#levelSelect>main>aside {
+    display: inline-flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+#levelSelect>main>button {
+    background-color: rgba(255, 255, 255, 0);
+    border: none;
+    color: white;
+    font-size: 96px;
+}
 
 
-
-
-
-
+#levelSelect.hide {
+    display: none;
+}

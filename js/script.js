@@ -15,6 +15,8 @@ let isTouchingWallLeft = false;
 let isTouchingWallRight = false;
 let isWallSliding = false;
 let sceneChange = false;
+let gameStart = false;
+
 
 
 
@@ -199,6 +201,71 @@ class characterSelection extends BaseScene {
     }
 }
 
+class levelSelect extends BaseScene {
+    constructor() {
+        super('levelSelect');
+    }
+
+    preload() {
+       
+        this.load.image('startMenu', '../img/bgHome.png');
+        this.load.image('ground', '../img/top.svg');
+    }
+
+    create() {
+        this.add.image(0, 0, 'startMenu').setOrigin(0, 0);
+
+        
+        
+        this.createPhysicsRect(0, 1018-25, 2048, 30, `0x56421C`);
+
+        platforms = this.physics.add.staticGroup();
+        platforms.create(505, 1018 - 50, 'ground')
+
+
+
+
+        
+
+        cursorUse = null
+        
+        
+    }
+}
+
+
+
+class mapOne extends BaseScene {
+    constructor() {
+        super('mapOne');
+    }
+
+    preload() {
+       
+    }
+
+    create() {
+
+        this.add.image(0, 0, 'startMenu').setOrigin(0, 0);
+
+        
+        
+        this.createPhysicsRect(0, 1018-25, 2048, 30, `0x56421C`);
+
+        platforms = this.physics.add.staticGroup();
+        platforms.create(505, 1018 - 50, 'ground')
+
+
+
+
+        
+
+        cursorUse = null
+        
+        
+    }
+}
+
 //  Game Config
 var config = {
     type: Phaser.AUTO,
@@ -218,7 +285,7 @@ var config = {
             debug: false
         }
     },
-    scene: [StartMenu, characterSelection],
+    scene: [StartMenu, characterSelection, levelSelect, mapOne],
 
 };
 
@@ -232,4 +299,18 @@ function changeScene(name){
         game.scene.keys['StartMenu'].scene.start('characterSelection');
         document.getElementById("characterSelectMenu").classList.toggle("show");
     }
+    else if(name === "mapSelection"){
+        document.getElementById("characterSelectMenu").classList.toggle("hide");
+        game.scene.keys['characterSelection'].scene.start('levelSelect');
+        document.getElementById("levelSelect").classList.toggle("show");
+
+    }
+    else if(name === "mapOne"){
+        document.getElementById("levelSelect").classList.toggle("hide");
+        game.scene.keys['levelSelect'].scene.start('mapOne');
+        console.log(playerOptions)
+
+    }
 }
+
+
