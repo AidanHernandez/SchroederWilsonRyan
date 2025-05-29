@@ -177,169 +177,122 @@ h1 {
     width: 100%;
     left: 0;
     bottom: 45vh;
+    /* height: 325px; */
 }
 
-#wasd {
-
-    transition: margin-bottom 0.5s ease;
-
-}
-
-.wasdOnline {
-    margin-bottom: 5vh;
-
-    transition: margin-bottom 0.5s ease;
-}
-
-.notOnline>rect {
-    transition: stroke 0.5s ease;
-    stroke: rgb(255, 255, 255);
-}
-
-.notOnline>path {
-    transition: fill 0.5s ease;
-    fill: rgb(255, 255, 255);
-}
-
-
-#wasd.thimble>rect{
-    transition: stroke 0.5s ease;
-    stroke: rgba(189, 193, 195, 0.5)
-    
-}
-
-#wasd.thimble>path{
-    transition: fill 0.5s ease;
-    fill: rgba(189, 193, 195, 0.5)
-}
-
-#wasd.tony>rect{
-    transition: stroke 0.5s ease;
-    stroke: #fed5bc80
-    
-}
-
-#wasd.tony>path{
-    transition: fill 0.5s ease;
-    fill: #fed5bc80
-}
-
-#wasd.basketball>rect{
-    transition: stroke 0.5s ease;
-    stroke: #fe793280
-    
-}
-
-#wasd.basketball>path{
-    transition: fill 0.5s ease;
-    fill: #fe793280
-}
-
-#wasd.miku>rect{
-    transition: stroke 0.5s ease;
-    stroke: #95d2d380
-    
-}
-
-#wasd.miku>path{
-    transition: fill 0.5s ease;
-    fill: #95d2d380
-}
-
-#wasd.teddie>rect{
-    transition: stroke 0.5s ease;
-    stroke: #ece2cc80
-    
-}
-
-#wasd.teddie>path{
-    transition: fill 0.5s ease;
-    fill: #ece2cc80
-}
-
-
-
-
-
-
-
-
-
-
-.wasdSelected {
-    margin-bottom: 8vh;
-    transition: margin-bottom 0.5s ease;
-}
-
-.wasdSelected>path {
-    fill: rgb(66, 66, 66);
-}
-
-.wasdSelected>rect {
-    stroke: rgb(66, 66, 66);
-}
 
 #readyPlayerOne, #readyPlayerTwo{
     opacity: 0;
     transition: opacity 0.4s ease;
 }
 
-.showPlayerOne, .showplayerTwo{
+
+#wasd, #arrow, #tfgh, #ijkl{
+
+    transition: margin-bottom 0.5s ease, opacity 0.5s ease;
+
+}
+
+.online {
+    margin-bottom: 5vh;
+    transition: margin-bottom 0.5s ease;
+}
+
+.locked {
+    margin-bottom: 8vh;
+    transition: margin-bottom 0.5s ease;
+}
+
+
+
+.showPlayer{
     opacity: 0.5 !important;
 }
 
-.playerOneSelected, .playerTwoSelected{
+.selected{
     opacity: 1 !important;
     transition: opacity 0.4s ease;
 }
 
 
 
-#arrow {
-
-    transition: margin-bottom 0.5s ease;
-
-}
 
 
-
-.arrowNoPLayer>rect {
+#wasd.thimble>rect, #arrow.thimble > rect, #tfgh.thimble > rect, #ijkl.thimble > rect{
     transition: stroke 0.5s ease;
-    stroke: rgb(255, 255, 255);
+    stroke: rgb(189, 193, 195)
+    
 }
 
-.arrowNoPLayer>path {
+#wasd.thimble>path, #arrow.thimble>path, #tfgh.thimble > path, #ijkl.thimble > path{
     transition: fill 0.5s ease;
-    fill: rgb(255, 255, 255);
-    stroke: rgba(0, 0, 0, 0);
+    fill: rgb(189, 193, 195)
 }
 
-.arrowPlayerSelectingCharacter {
-    margin-bottom: 5vh;
-    transition: margin-bottom 0.5s ease;
-
-}
-
-
-.arrowPlayerSelectingCharacter>rect {
+#wasd.tony>rect, #arrow.tony > rect, #tfgh.tony > rect, #ijkl.tony > rect{
     transition: stroke 0.5s ease;
-    stroke: rgb(168, 168, 168);
+    stroke: #fed5bc
+    
 }
 
-.arrowPlayerSelectingCharacter>path {
+#wasd.tony>path, #arrow.tony>path, #tfgh.tony > path, #ijkl.tony > path{
     transition: fill 0.5s ease;
-    fill: rgb(168, 168, 168);
+    fill: #fed5bc
 }
 
-.arrowPlayerLocked {
-    margin-bottom: 8vh;
-    transition: margin-bottom 0.5s ease;
+#wasd.basketballGod>rect, #arrow.basketballGod > rect, #tfgh.basketballGod > rect, #ijkl.basketballGod > rect{
+    transition: stroke 0.5s ease;
+    stroke: #fe7932
+    
 }
 
-.arrowPlayerLocked>path {
-    fill: rgb(66, 66, 66);
+#wasd.basketballGod>path, #arrow.basketballGod>path, #tfgh.basketballGod > path, #ijkl.basketballGod > path{
+    transition: fill 0.5s ease;
+    fill: #fe7932
 }
 
-.arrowPlayerLocked>rect {
-    stroke: rgb(66, 66, 66);
+#wasd.hatsuneMiku>rect, #arrow.hatsuneMiku > rect, #tfgh.hatsuneMiku > rect, #ijkl.hatsuneMiku > rect{
+    transition: stroke 0.5s ease;
+    stroke: #95d2d3
+    
 }
+
+#wasd.hatsuneMiku>path, #arrow.hatsuneMiku>path, #tfgh.hatsuneMiku > path, #ijkl.hatsuneMiku > path{
+    transition: fill 0.5s ease;
+    fill: #95d2d3
+}
+
+#wasd.teddie>rect, #arrow.teddie > rect, #tfgh.teddie > rect, #ijkl.teddie > rect{
+    transition: stroke 0.5s ease;
+    stroke: #ece2cc
+    
+}
+
+#wasd.teddie>path, #arrow.teddie>path, #tfgh.teddie > path, #ijkl.teddie > path{
+    transition: fill 0.5s ease;
+    fill: #ece2cc
+}
+
+
+
+
+
+
+
+#characterSelectMenu > h2{
+    color: white;
+    font-size: 70px;
+    margin-top: 12vh;
+    background-color: black;
+}
+
+
+
+
+
+
+
+
+
+
+
