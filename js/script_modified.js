@@ -16,15 +16,6 @@ let isTouchingWallRight = false;
 let isWallSliding = false;
 let sceneChange = false;
 let gameStart = false;
-let bigPlat;
-let platSmall;
-
-
-let isJumping = false;
-let jumpTimer = 0;
-const maxJumpTime = 250; // milliseconds (you can tune this)
-const jumpForce = -8;   // small upward force per frame
-const jumpStartVelocity = -200; // initial velocity to start jump
 
 
 
@@ -38,42 +29,33 @@ class BaseScene extends Phaser.Scene {
     update() {
 
         if (cursorUse) {
-            gravity = 300;
-            const isGrounded = player.body.touching.down || player.body.blocked.down;
+
+
 
             if (cursors.left.isDown) {
                 player.setVelocityX(-200);
+
                 player.anims.play('left', true);
-            } else if (cursors.right.isDown) {
+            }
+            else if (cursors.right.isDown) {
                 player.setVelocityX(200);
+
                 player.anims.play('right', true);
-            } else {
+            }
+            else {
                 player.setVelocityX(0);
+
                 player.anims.play('turn');
             }
 
-            // Variable jump height logic
-            if (isGrounded && cursors.up.isDown) {
-                isJumping = true;
-                jumpTimer = 0;
-                player.setVelocityY(jumpStartVelocity); // start upward
+            if (cursors.up.isDown && player.body.touching.down) {
+                player.setVelocityY(-330);
             }
 
-            if (isJumping && cursors.up.isDown) {
-                if (jumpTimer < maxJumpTime) {
-                    player.setVelocityY(player.body.velocity.y + jumpForce); // continue rising
-                    jumpTimer += this.game.loop.delta;
-                } else {
-                    isJumping = false; // reached max jump time
-                }
-            }
 
-            if (!cursors.up.isDown) {
-                isJumping = false; // released early
-            }
+        } else if(cursorUse === false) {
 
-        } else if (cursorUse === false) {
-            gravity = 200;
+
             if (step === 1 && player.y === 929) {
                 player.setVelocityX(-160);
                 player.anims.play('left', true);
@@ -83,9 +65,10 @@ class BaseScene extends Phaser.Scene {
             }
 
             if (player.y === 675.5 && player.x <= 140 && step === 1) {
-                step = 2;
+                step = 2
                 player.setVelocityX(160);
                 player.anims.play('right', true);
+
             }
 
             if (player.x >= 142 && player.y === 675.5 && step === 2) {
@@ -93,7 +76,7 @@ class BaseScene extends Phaser.Scene {
             }
 
             if (player.x >= 839 && step === 2) {
-                step = 3;
+                step = 3
                 player.setVelocityX(-160);
                 player.anims.play('left', true);
             }
@@ -104,18 +87,25 @@ class BaseScene extends Phaser.Scene {
                 if (player.y <= 696.5) {
                     player.setVelocityX(160);
                     player.anims.play('right', true);
-                    step = 4;
+                    step = 4
                 }
+
             }
 
             if (player.x === 992 && step === 4 && player.y === 929) {
-                step = 1;
+                step = 1
             }
 
+
+
+
+            // Optional: Turn animation when idle
             if (player.body.velocity.x === 0) {
                 player.anims.play('turn');
             }
         }
+        
+
     }
 
     createPhysicsRect(x, y, width, height, color) {
@@ -124,8 +114,8 @@ class BaseScene extends Phaser.Scene {
         this.physics.add.collider(player, rect);
         return rect;
     }
-}
 
+}
 
 //  Start Menu Scene
 class StartMenu extends BaseScene {
@@ -134,12 +124,15 @@ class StartMenu extends BaseScene {
     }
 
     preload() {
+        
         this.load.spritesheet('dude', '../phaser3-tutorial-src/assets/dude.png', { frameWidth: 32, frameHeight: 48 });
         this.load.image('startMenu', '../img/bgHome.png');
         this.load.image('ground', '../img/top.svg');
     }
 
     create() {
+        
+
         this.add.image(0, 0, 'startMenu').setOrigin(0, 0);
         platforms = this.physics.add.staticGroup();
         platforms.create(505, 1018 - 50, 'ground')
@@ -170,10 +163,10 @@ class StartMenu extends BaseScene {
         this.createPhysicsRect(241, 714.5, 290, 30, `00FFFFFF`);
         this.createPhysicsRect(765, 714.5, 290, 30, `00FFFFFF`);
         this.createPhysicsRect(505, 456, 375, 30, `00FFFFFF`);
-
+        
         cursorUse = false
 
-        this.physics.add.collider(player, platforms);
+        
     }
 }
 
@@ -185,17 +178,23 @@ class characterSelection extends BaseScene {
     }
 
     preload() {
-
+        this.load.image('platform', 'assets/platform-middle.png');
+       
         this.load.image('startMenu', '../img/bgHome.png');
         this.load.image('ground', '../img/top.svg');
     }
 
     create() {
+        // Create a resizable platform using TileSprite
+        let platform = this.add.tileSprite(400, 300, 300, 32, 'platform');
+        this.physics.add.existing(platform, true); // Static body
+        this.physics.add.collider(player, platform);
+
         this.add.image(0, 0, 'startMenu').setOrigin(0, 0);
 
-
-
-        this.createPhysicsRect(0, 1018 - 25, 2048, 30, `0x56421C`);
+        
+        
+        this.createPhysicsRect(0, 1018-25, 2048, 30, `0x56421C`);
 
         platforms = this.physics.add.staticGroup();
         platforms.create(505, 1018 - 50, 'ground')
@@ -203,11 +202,11 @@ class characterSelection extends BaseScene {
 
 
 
-
+        
 
         cursorUse = null
-
-
+        
+        
     }
 }
 
@@ -217,17 +216,23 @@ class levelSelect extends BaseScene {
     }
 
     preload() {
-
+        this.load.image('platform', 'assets/platform-middle.png');
+       
         this.load.image('startMenu', '../img/bgHome.png');
         this.load.image('ground', '../img/top.svg');
     }
 
     create() {
+        // Create a resizable platform using TileSprite
+        let platform = this.add.tileSprite(400, 300, 300, 32, 'platform');
+        this.physics.add.existing(platform, true); // Static body
+        this.physics.add.collider(player, platform);
+
         this.add.image(0, 0, 'startMenu').setOrigin(0, 0);
 
-
-
-        this.createPhysicsRect(0, 1018 - 25, 2048, 30, `0x56421C`);
+        
+        
+        this.createPhysicsRect(0, 1018-25, 2048, 30, `0x56421C`);
 
         platforms = this.physics.add.staticGroup();
         platforms.create(505, 1018 - 50, 'ground')
@@ -235,11 +240,11 @@ class levelSelect extends BaseScene {
 
 
 
-
+        
 
         cursorUse = null
-
-
+        
+        
     }
 }
 
@@ -251,74 +256,34 @@ class mapOne extends BaseScene {
     }
 
     preload() {
-
-        this.load.image('platBig', '../img/platBig.svg');
-        this.load.image('platSmall', '../img/platSmall.svg');
-        this.load.image('startMenu', '../img/bgHome.png');
-        this.load.image('ground', '../img/top.svg');
-        this.load.spritesheet('dude', '../phaser3-tutorial-src/assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+        this.load.image('platform', 'assets/platform-middle.png');
+       
     }
 
     create() {
+        // Create a resizable platform using TileSprite
+        let platform = this.add.tileSprite(400, 300, 300, 32, 'platform');
+        this.physics.add.existing(platform, true); // Static body
+        this.physics.add.collider(player, platform);
+
 
         this.add.image(0, 0, 'startMenu').setOrigin(0, 0);
 
-
-
-
-
-
-
-        bigPlat = this.physics.add.staticGroup();
-        bigPlat.create(900, 850, 'platBig')
-        bigPlat.create(120, 850, 'platBig')
-        bigPlat.create(500, 700, 'platBig')
-        bigPlat.create(200, 540, 'platBig')
-
-
-        platSmall = this.physics.add.staticGroup();
-
-        platSmall.create(850, 400, 'platSmall')
-        platSmall.create(450, 150, 'platSmall')
-
-
-        this.createPhysicsRect(0, 1018 - 25, 2048, 30, `0x56421C`);
+        
+        
+        this.createPhysicsRect(0, 1018-25, 2048, 30, `0x56421C`);
 
         platforms = this.physics.add.staticGroup();
         platforms.create(505, 1018 - 50, 'ground')
 
 
 
-        player = this.physics.add.sprite(2048, 929, 'dude');
-        player.setCollideWorldBounds(true);
 
-        this.anims.create({
-            key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
-            frameRate: 10,
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'turn',
-            frames: [{ key: 'dude', frame: 4 }],
-            frameRate: 20
-        });
-
-        this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-            frameRate: 10,
-            repeat: -1
-        });
-
+        
 
         cursorUse = true
-        cursors = this.input.keyboard.createCursorKeys();
-
-        this.physics.add.collider(player, platforms);
-        this.physics.add.collider(player, bigPlat);
-        this.physics.add.collider(player, platSmall);
+        
+        
     }
 }
 
@@ -349,20 +314,19 @@ var config = {
 var game = new Phaser.Game(config);
 
 
-function changeScene(name) {
-    if (name === "homePage") {
+function changeScene(name){
+    if(name === "homePage" ){
         document.getElementById("homePage").classList.toggle("hide");
         game.scene.keys['StartMenu'].scene.start('characterSelection');
         document.getElementById("characterSelectMenu").classList.toggle("show");
     }
-    else if (name === "mapSelection") {
+    else if(name === "mapSelection"){
         document.getElementById("characterSelectMenu").classList.toggle("hide");
         game.scene.keys['characterSelection'].scene.start('levelSelect');
         document.getElementById("levelSelect").classList.toggle("show");
 
     }
-    else if (name === "mapOne") {
-        document.getElementById("homePage").classList.toggle("hide");
+    else if(name === "mapOne"){
         document.getElementById("levelSelect").classList.toggle("hide");
         game.scene.keys['levelSelect'].scene.start('mapOne');
         console.log(playerOptions)
