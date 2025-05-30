@@ -20,11 +20,6 @@ let bigPlat;
 let platSmall;
 
 
-let isJumping = false;
-let jumpTimer = 0;
-const maxJumpTime = 250; // milliseconds (you can tune this)
-const jumpForce = -8;   // small upward force per frame
-const jumpStartVelocity = -200; // initial velocity to start jump
 
 
 
@@ -36,11 +31,8 @@ class BaseScene extends Phaser.Scene {
     }
 
     update() {
-
         if (cursorUse) {
-            gravity = 300;
-            const isGrounded = player.body.touching.down || player.body.blocked.down;
-
+           
             if (cursors.left.isDown) {
                 player.setVelocityX(-200);
                 player.anims.play('left', true);
@@ -51,28 +43,15 @@ class BaseScene extends Phaser.Scene {
                 player.setVelocityX(0);
                 player.anims.play('turn');
             }
-
-            // Variable jump height logic
-            if (isGrounded && cursors.up.isDown) {
-                isJumping = true;
-                jumpTimer = 0;
-                player.setVelocityY(jumpStartVelocity); // start upward
+    
+           
+    
+            if (cursors.up.isDown && player.body.touching.down) {
+                player.setVelocityY(-330);
             }
-
-            if (isJumping && cursors.up.isDown) {
-                if (jumpTimer < maxJumpTime) {
-                    player.setVelocityY(player.body.velocity.y + jumpForce); // continue rising
-                    jumpTimer += this.game.loop.delta;
-                } else {
-                    isJumping = false; // reached max jump time
-                }
-            }
-
-            if (!cursors.up.isDown) {
-                isJumping = false; // released early
-            }
-
+    
         } else if (cursorUse === false) {
+            // Your scripted intro behavior (unchanged)
             gravity = 200;
             if (step === 1 && player.y === 929) {
                 player.setVelocityX(-160);
@@ -81,23 +60,23 @@ class BaseScene extends Phaser.Scene {
                     player.setVelocityY(-330);
                 }
             }
-
+    
             if (player.y === 675.5 && player.x <= 140 && step === 1) {
                 step = 2;
                 player.setVelocityX(160);
                 player.anims.play('right', true);
             }
-
+    
             if (player.x >= 142 && player.y === 675.5 && step === 2) {
                 player.setVelocityY(-360);
             }
-
+    
             if (player.x >= 839 && step === 2) {
                 step = 3;
                 player.setVelocityX(-160);
                 player.anims.play('left', true);
             }
-
+    
             if (player.x <= 17 && step === 3) {
                 player.setVelocityX(0);
                 player.setVelocityY(-360);
@@ -107,16 +86,17 @@ class BaseScene extends Phaser.Scene {
                     step = 4;
                 }
             }
-
+    
             if (player.x === 992 && step === 4 && player.y === 929) {
                 step = 1;
             }
-
+    
             if (player.body.velocity.x === 0) {
                 player.anims.play('turn');
             }
         }
     }
+    
 
     createPhysicsRect(x, y, width, height, color) {
         const rect = this.add.rectangle(x, y, width, height, color);
@@ -337,7 +317,7 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: gravity },
+            gravity: { y: gravity  },
             debug: false
         }
     },
