@@ -1,4 +1,4 @@
-const playerOne = document.getElementById("readyPlayerOne");
+const playerOnes = document.getElementById("readyPlayerOne");
 const playerTwo = document.getElementById("readyPlayerTwo");
 const playerThree = document.getElementById("readyPlayerThree");
 const playerFour = document.getElementById("readyPlayerFour");
@@ -29,11 +29,11 @@ let characters = [
     ['thimble', 'tony', 'basketballGod', 'hatsuneMiku', 'teddie']
 ]
 
-let playerOptions = ["", "", "", ""];
+let playerOptions = ["sd", "sad", "", ""];
 let playerIndexes = [0, 0, 0, 0];
 
 
-const players = [playerOne, playerTwo, playerThree, playerFour];
+const players = [playerOnes, playerTwo, playerThree, playerFour];
 const controls = [wasd, arrow, tfgh, ijkl];
 
 

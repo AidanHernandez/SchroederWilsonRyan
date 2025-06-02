@@ -1,6 +1,6 @@
 
 
-var player;
+var playerOne;
 var stars;
 var bombs;
 var platforms;
@@ -18,18 +18,125 @@ let sceneChange = false;
 let gameStart = false;
 let bigPlat;
 let platSmall;
+let player2;
+let wasdPLayer;
+let isJumping2 = false;
+let coyoteTimer2 = 0;
+let jumpBufferTimer2 = 0;
+let jumpTimer2 = 0;
+let coyoteTimer = 0;
+let jumpBufferTimer = 0;
+let isJumping = false;
+let jumpTimer = 0;
+let GRAVITY = 1500;
+let itPlayer = '';
+
+let tagCooldown = 1000;
+let lastTagTime = 0;
 
 
 
 const JUMP_VELOCITY = -750;
-const GRAVITY = 1500;
 const COYOTE_TIME = 100;
 const JUMP_BUFFER_TIME = 100;
+const maxJumpTime = 300;
+const jumpForce = -35;
+const FIRST_JUMP_VELOCITY = -200;
 
-let coyoteTimer = 0;
-let jumpBufferTimer = 0;
-let isJumping = false;
+let playerState1 = {
+    isJumping: false,
+    coyoteTimer: 0,
+    jumpBufferTimer: 0,
+    jumpTimer: 0
+};
 
+let playerState2 = {
+    isJumping: false,
+    coyoteTimer: 0,
+    jumpBufferTimer: 0,
+    jumpTimer: 0
+};
+
+
+// Helper function (can be inside or outside BaseScene)
+function handlePlayerMovement(player, input, delta, state) {
+    const onGround = player.body.touching.down;
+
+    // Horizontal Movement
+    // Horizontal Movement
+    let speed = (itPlayer === 'player1' && player === playerOne) || (itPlayer === 'player2' && player === player2)
+        ? 400  // "It" player moves faster
+        : 300;
+
+    if (input.left.isDown) {
+        player.setVelocityX(-speed);
+        player.anims.play('left', true);
+    } else if (input.right.isDown) {
+        player.setVelocityX(speed);
+        player.anims.play('right', true);
+    } else {
+        player.setVelocityX(0);
+        player.anims.play('turn');
+    }
+
+
+
+    // Horizontal Movement
+    // if (input.left.isDown) {
+    //     player.setVelocityX(-300);
+    //     player.anims.play('left', true);
+    // } else if (input.right.isDown) {
+    //     player.setVelocityX(300);
+    //     player.anims.play('right', true);
+    // } else {
+    //     player.setVelocityX(0);
+    //     player.anims.play('turn');
+    // }
+
+    // Coyote Time
+    if (onGround) {
+        state.coyoteTimer = COYOTE_TIME;
+    } else {
+        state.coyoteTimer -= delta;
+    }
+
+    // Jump Buffering
+    if (Phaser.Input.Keyboard.JustDown(input.up)) {
+        state.jumpBufferTimer = JUMP_BUFFER_TIME;
+    } else {
+        state.jumpBufferTimer -= delta;
+    }
+
+    // Jump
+    if (state.jumpBufferTimer > 0 && state.coyoteTimer > 0) {
+        player.setVelocityY(FIRST_JUMP_VELOCITY);
+        state.isJumping = true;
+        state.jumpBufferTimer = 0;
+        state.coyoteTimer = 0;
+        state.jumpTimer = 0;
+    }
+
+    // Hold to jump higher
+    if (state.isJumping && input.up.isDown) {
+        if (state.jumpTimer < maxJumpTime) {
+            player.setVelocityY(player.body.velocity.y + jumpForce);
+            state.jumpTimer += delta;
+        } else {
+            state.isJumping = false;
+        }
+    }
+
+    // Variable jump height (on release)
+    if (state.isJumping && input.up.isUp && player.body.velocity.y < 0) {
+        player.setVelocityY(player.body.velocity.y * 0.5);
+        state.isJumping = false;
+    }
+
+    // Reset jump state when grounded
+    if (onGround && player.body.velocity.y >= 0) {
+        state.isJumping = false;
+    }
+}
 
 //  Base scene with shared update logic
 class BaseScene extends Phaser.Scene {
@@ -39,101 +146,55 @@ class BaseScene extends Phaser.Scene {
 
     update(time, delta) {
         if (cursorUse) {
-            const onGround = player.body.touching.down;
+            // Handle Player 1 input and jumping
+            handlePlayerMovement(playerOne, cursors, delta, playerState1);
 
-            // Left/Right Movement (your existing logic)
-            if (cursors.left.isDown) {
-                player.setVelocityX(-200);
-                player.anims.play('left', true);
-            } else if (cursors.right.isDown) {
-                player.setVelocityX(200);
-                player.anims.play('right', true);
-            } else {
-                player.setVelocityX(0);
-                player.anims.play('turn');
-            }
-
-            // Coyote time
-            if (onGround) {
-                coyoteTimer = COYOTE_TIME;
-            } else {
-                coyoteTimer -= delta;
-            }
-
-            // Jump buffering
-            if (Phaser.Input.Keyboard.JustDown(cursors.up)) {
-                jumpBufferTimer = JUMP_BUFFER_TIME;
-            } else {
-                jumpBufferTimer -= delta;
-            }
-
-            // Jump
-            if (jumpBufferTimer > 0 && coyoteTimer > 0) {
-                player.setVelocityY(JUMP_VELOCITY);
-                isJumping = true;
-                jumpBufferTimer = 0;
-                coyoteTimer = 0;
-            }
-
-            // Variable jump height: gentler cut or disable
-            if (isJumping && !cursors.up.isDown && player.body.velocity.y < 0) {
-                // Try 0.8 or comment out this line for less floaty jumps:
-                player.setVelocityY(player.body.velocity.y * 0.8);
-                isJumping = false;
-            }
-
-            // Faster falling (optional)
-            // if (player.body.velocity.y > 0) {
-            //     player.body.velocity.y += GRAVITY * 0.15 * (delta / 16);
-            // }
-
-            if (onGround) {
-                isJumping = false;
-            }
+            // Handle Player 2 input and jumping
+            handlePlayerMovement(player2, wasdPLayer, delta, playerState2);
 
         } else if (cursorUse === false) {
             // Your scripted intro behavior (unchanged)
-            gravity = 200;
-            if (step === 1 && player.y === 929) {
-                player.setVelocityX(-160);
-                player.anims.play('left', true);
-                if (player.x <= 626) {
-                    player.setVelocityY(-330);
+            GRAVITY = 200;
+            if (step === 1 && playerOne.y === 929) {
+                playerOne.setVelocityX(-160);
+                playerOne.anims.play('left', true);
+                if (playerOne.x <= 626) {
+                    playerOne.setVelocityY(-330);
                 }
             }
 
-            if (player.y === 675.5 && player.x <= 140 && step === 1) {
+            if (playerOne.y === 675.5 && playerOne.x <= 140 && step === 1) {
                 step = 2;
-                player.setVelocityX(160);
-                player.anims.play('right', true);
+                playerOne.setVelocityX(160);
+                playerOne.anims.play('right', true);
             }
 
-            if (player.x >= 142 && player.y === 675.5 && step === 2) {
-                player.setVelocityY(-360);
+            if (playerOne.x >= 142 && playerOne.y === 675.5 && step === 2) {
+                playerOne.setVelocityY(-360);
             }
 
-            if (player.x >= 839 && step === 2) {
+            if (playerOne.x >= 839 && step === 2) {
                 step = 3;
-                player.setVelocityX(-160);
-                player.anims.play('left', true);
+                playerOne.setVelocityX(-160);
+                playerOne.anims.play('left', true);
             }
 
-            if (player.x <= 17 && step === 3) {
-                player.setVelocityX(0);
-                player.setVelocityY(-360);
-                if (player.y <= 696.5) {
-                    player.setVelocityX(160);
-                    player.anims.play('right', true);
+            if (playerOne.x <= 17 && step === 3) {
+                playerOne.setVelocityX(0);
+                playerOne.setVelocityY(-360);
+                if (playerOne.y <= 696.5) {
+                    playerOne.setVelocityX(160);
+                    playerOne.anims.play('right', true);
                     step = 4;
                 }
             }
 
-            if (player.x === 992 && step === 4 && player.y === 929) {
+            if (playerOne.x === 992 && step === 4 && playerOne.y === 929) {
                 step = 1;
             }
 
-            if (player.body.velocity.x === 0) {
-                player.anims.play('turn');
+            if (playerOne.body.velocity.x === 0) {
+                playerOne.anims.play('turn');
             }
         }
     }
@@ -142,7 +203,7 @@ class BaseScene extends Phaser.Scene {
     createPhysicsRect(x, y, width, height, color) {
         const rect = this.add.rectangle(x, y, width, height, color);
         this.physics.add.existing(rect, true);
-        this.physics.add.collider(player, rect);
+        this.physics.add.collider(playerOne, rect);
         return rect;
     }
 }
@@ -165,8 +226,8 @@ class StartMenu extends BaseScene {
         platforms = this.physics.add.staticGroup();
         platforms.create(505, 1018 - 50, 'ground')
 
-        player = this.physics.add.sprite(2048, 929, 'dude');
-        player.setCollideWorldBounds(true);
+        playerOne = this.physics.add.sprite(2048, 929, 'dude');
+        playerOne.setCollideWorldBounds(true);
 
         this.anims.create({
             key: 'left',
@@ -194,7 +255,7 @@ class StartMenu extends BaseScene {
 
         cursorUse = false
 
-        this.physics.add.collider(player, platforms);
+        this.physics.add.collider(playerOne, platforms);
     }
 }
 
@@ -277,6 +338,7 @@ class mapOne extends BaseScene {
         this.load.image('platSmall', '../img/platSmall.svg');
         this.load.image('startMenu', '../img/bgHome.png');
         this.load.image('ground', '../img/top.svg');
+        this.load.image('bounce', '../img/bouncePad.svg');
         this.load.spritesheet('dude', '../phaser3-tutorial-src/assets/dude.png', { frameWidth: 32, frameHeight: 48 });
     }
 
@@ -286,8 +348,8 @@ class mapOne extends BaseScene {
 
 
 
-
-
+        let bouncyPad = this.physics.add.staticGroup();
+        bouncyPad.create(400, 950, 'bounce')
 
 
         bigPlat = this.physics.add.staticGroup();
@@ -310,8 +372,12 @@ class mapOne extends BaseScene {
 
 
 
-        player = this.physics.add.sprite(2048, 929, 'dude');
-        player.setCollideWorldBounds(true);
+        playerOne = this.physics.add.sprite(2048, 929, 'dude');
+        playerOne.setCollideWorldBounds(true);
+
+        player2 = this.physics.add.sprite(2048 - 100, 929, 'dude'); // Slightly offset
+        player2.setCollideWorldBounds(true);
+
 
         this.anims.create({
             key: 'left',
@@ -333,13 +399,39 @@ class mapOne extends BaseScene {
             repeat: -1
         });
 
+        wasdPLayer = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            right: Phaser.Input.Keyboard.KeyCodes.D
+        });
+
+
 
         cursorUse = true
         cursors = this.input.keyboard.createCursorKeys();
 
-        this.physics.add.collider(player, platforms);
-        this.physics.add.collider(player, bigPlat);
-        this.physics.add.collider(player, platSmall);
+        this.physics.add.collider(playerOne, platforms);
+        this.physics.add.collider(playerOne, bigPlat);
+        this.physics.add.collider(playerOne, platSmall);
+
+        this.physics.add.collider(player2, platforms);
+        this.physics.add.collider(player2, bigPlat);
+        this.physics.add.collider(player2, platSmall);
+
+
+        this.physics.add.collider(playerOne, bouncyPad, () => bouncePlayer(playerOne), null, this);
+        this.physics.add.collider(player2, bouncyPad, () => bouncePlayer(player2), null, this);
+
+
+
+
+
+        this.physics.add.overlap(playerOne, player2, tagged, null, this);
+
+
+
+
     }
 }
 
@@ -386,9 +478,56 @@ function changeScene(name) {
         document.getElementById("homePage").classList.toggle("hide");
         document.getElementById("levelSelect").classList.toggle("hide");
         game.scene.keys['levelSelect'].scene.start('mapOne');
-        console.log(playerOptions)
+        for (let i = 0; i < playerOptions.length; i++) {
+            playerOptions = playerOptions.filter(option => option !== "");
+        }
+
+
+
+        if (Math.floor(Math.random() * playerOptions.length) === 0) {
+            itPlayer = 'player1'
+        }
+        else if (Math.floor(Math.random() * playerOptions.length) === 1) {
+            itPlayer = 'Player 2'
+        }
 
     }
 }
 
 
+
+
+
+
+function tagged(p1, p2) {
+
+    const now = Date.now();
+    if (now - lastTagTime < tagCooldown) {
+        return; // Still in cooldown, ignore tag
+    }
+
+    lastTagTime = now;
+
+
+    if (itPlayer === 'player1') {
+        console.log("Player 1 tagged Player 2!");
+        itPlayer = 'player2';
+        p2.setTint(0xff0000);
+        p1.clearTint();
+
+
+
+    } else {
+        console.log("Player 2 tagged Player 1!");
+        itPlayer = 'player1';
+        p1.setTint(0xff0000);
+        p2.clearTint();
+    }
+
+
+
+}
+
+function bouncePlayer(player) {
+    player.setVelocityY(-800); // Adjust this value to control bounce strength
+}
