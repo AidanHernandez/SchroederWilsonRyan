@@ -21,7 +21,14 @@ let platSmall;
 
 
 
+const JUMP_VELOCITY = -750;
+const GRAVITY = 1500;
+const COYOTE_TIME = 100;
+const JUMP_BUFFER_TIME = 100;
 
+let coyoteTimer = 0;
+let jumpBufferTimer = 0;
+let isJumping = false;
 
 
 //  Base scene with shared update logic
@@ -30,9 +37,11 @@ class BaseScene extends Phaser.Scene {
         super(key);
     }
 
-    update() {
+    update(time, delta) {
         if (cursorUse) {
-           
+            const onGround = player.body.touching.down;
+
+            // Left/Right Movement (your existing logic)
             if (cursors.left.isDown) {
                 player.setVelocityX(-200);
                 player.anims.play('left', true);
@@ -43,13 +52,45 @@ class BaseScene extends Phaser.Scene {
                 player.setVelocityX(0);
                 player.anims.play('turn');
             }
-    
-           
-    
-            if (cursors.up.isDown && player.body.touching.down) {
-                player.setVelocityY(-330);
+
+            // Coyote time
+            if (onGround) {
+                coyoteTimer = COYOTE_TIME;
+            } else {
+                coyoteTimer -= delta;
             }
-    
+
+            // Jump buffering
+            if (Phaser.Input.Keyboard.JustDown(cursors.up)) {
+                jumpBufferTimer = JUMP_BUFFER_TIME;
+            } else {
+                jumpBufferTimer -= delta;
+            }
+
+            // Jump
+            if (jumpBufferTimer > 0 && coyoteTimer > 0) {
+                player.setVelocityY(JUMP_VELOCITY);
+                isJumping = true;
+                jumpBufferTimer = 0;
+                coyoteTimer = 0;
+            }
+
+            // Variable jump height: gentler cut or disable
+            if (isJumping && !cursors.up.isDown && player.body.velocity.y < 0) {
+                // Try 0.8 or comment out this line for less floaty jumps:
+                player.setVelocityY(player.body.velocity.y * 0.8);
+                isJumping = false;
+            }
+
+            // Faster falling (optional)
+            // if (player.body.velocity.y > 0) {
+            //     player.body.velocity.y += GRAVITY * 0.15 * (delta / 16);
+            // }
+
+            if (onGround) {
+                isJumping = false;
+            }
+
         } else if (cursorUse === false) {
             // Your scripted intro behavior (unchanged)
             gravity = 200;
@@ -60,23 +101,23 @@ class BaseScene extends Phaser.Scene {
                     player.setVelocityY(-330);
                 }
             }
-    
+
             if (player.y === 675.5 && player.x <= 140 && step === 1) {
                 step = 2;
                 player.setVelocityX(160);
                 player.anims.play('right', true);
             }
-    
+
             if (player.x >= 142 && player.y === 675.5 && step === 2) {
                 player.setVelocityY(-360);
             }
-    
+
             if (player.x >= 839 && step === 2) {
                 step = 3;
                 player.setVelocityX(-160);
                 player.anims.play('left', true);
             }
-    
+
             if (player.x <= 17 && step === 3) {
                 player.setVelocityX(0);
                 player.setVelocityY(-360);
@@ -86,17 +127,17 @@ class BaseScene extends Phaser.Scene {
                     step = 4;
                 }
             }
-    
+
             if (player.x === 992 && step === 4 && player.y === 929) {
                 step = 1;
             }
-    
+
             if (player.body.velocity.x === 0) {
                 player.anims.play('turn');
             }
         }
     }
-    
+
 
     createPhysicsRect(x, y, width, height, color) {
         const rect = this.add.rectangle(x, y, width, height, color);
@@ -250,8 +291,8 @@ class mapOne extends BaseScene {
 
 
         bigPlat = this.physics.add.staticGroup();
-        bigPlat.create(900, 850, 'platBig')
-        bigPlat.create(120, 850, 'platBig')
+        bigPlat.create(800, 850, 'platBig')
+        bigPlat.create(220, 850, 'platBig')
         bigPlat.create(500, 700, 'platBig')
         bigPlat.create(200, 540, 'platBig')
 
@@ -317,7 +358,7 @@ var config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: gravity  },
+            gravity: { y: GRAVITY },
             debug: false
         }
     },
