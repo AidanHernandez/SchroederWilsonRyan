@@ -93,12 +93,12 @@ function handlePlayerMovement(player, input, delta, state) {
     //     player.anims.play('turn');
     // }
 
-    // Coyote Time
-    if (onGround) {
-        state.coyoteTimer = COYOTE_TIME;
-    } else {
-        state.coyoteTimer -= delta;
-    }
+    // // Coyote Time
+    // if (onGround) {
+    //     state.coyoteTimer = COYOTE_TIME;
+    // } else {
+    //     state.coyoteTimer -= delta;
+    // }
 
     // Jump Buffering
     if (Phaser.Input.Keyboard.JustDown(input.up)) {
@@ -108,11 +108,14 @@ function handlePlayerMovement(player, input, delta, state) {
     }
 
     // Jump
-    if (state.jumpBufferTimer > 0 && state.coyoteTimer > 0) {
+
+    // && state.coyoteTimer > 0
+
+    if (state.jumpBufferTimer > 0 ) {
         player.setVelocityY(FIRST_JUMP_VELOCITY);
         state.isJumping = true;
         state.jumpBufferTimer = 0;
-        state.coyoteTimer = 0;
+        // state.coyoteTimer = 0;
         state.jumpTimer = 0;
     }
 
@@ -465,19 +468,29 @@ var game = new Phaser.Game(config);
 function changeScene(name) {
     if (name === "homePage") {
         document.getElementById("homePage").classList.toggle("hide");
+        
         game.scene.keys['StartMenu'].scene.start('characterSelection');
+
+        game.scene.stop('StartMenu');
+
         document.getElementById("characterSelectMenu").classList.toggle("show");
     }
     else if (name === "mapSelection") {
         document.getElementById("characterSelectMenu").classList.toggle("hide");
+        
         game.scene.keys['characterSelection'].scene.start('levelSelect');
+        game.scene.stop('characterSelection');
+       
         document.getElementById("levelSelect").classList.toggle("show");
 
     }
     else if (name === "mapOne") {
-        document.getElementById("homePage").classList.toggle("hide");
+        // document.getElementById("homePage").classList.toggle("hide");
         document.getElementById("levelSelect").classList.toggle("hide");
         game.scene.keys['levelSelect'].scene.start('mapOne');
+
+        game.scene.stop('levelSelect');
+
         for (let i = 0; i < playerOptions.length; i++) {
             playerOptions = playerOptions.filter(option => option !== "");
         }
