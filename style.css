@@ -373,3 +373,7 @@ h1 {
 #levelSelect.hide {
     display: none;
 }
+
+#levelSelect>main>aside:last-of-type > img{
+    height: 200px;
+}

@@ -36,7 +36,7 @@ let playerOptions = ["sd", "sad", "", ""];
 let playerIndexes = [0, 0, 0, 0];
 
 
-const players = [playerOnes, playerTwo, playerThree, playerFour];
+const playersDom = [playerOnes, playerTwo, playerThree, playerFour];
 const controls = [wasd, arrow, tfgh, ijkl];
 
 
@@ -84,7 +84,7 @@ document.addEventListener('keydown', function (event) {
 
 
 function handleJoinOrLock(index) {
-    const player = players[index];
+    const player = playersDom[index];
     const control = controls[index];
 
     if (!player.classList.contains("showPlayer")) {
@@ -114,7 +114,7 @@ function handleJoinOrLock(index) {
 
 
 function handleUnjoinOrUnlock(index) {
-    const player = players[index];
+    const player = playersDom[index];
     const control = controls[index];
 
     if (control.classList.contains("locked")) {
@@ -141,7 +141,7 @@ function handleUnjoinOrUnlock(index) {
 
 
 function handleScroll(index, direction) {
-    const player = players[index];
+    const player = playersDom[index];
     const control = controls[index];
 
 
@@ -154,7 +154,7 @@ function handleScroll(index, direction) {
 
 
 function showCharacter(player) {
-    let index = players.indexOf(player);
+    let index = playersDom.indexOf(player);
     let character = characters[1][0];
     showCharacterByName(player, character);
     playerOptions[index] = character;
@@ -167,7 +167,7 @@ function showCharacter(player) {
 
 
 function removeCharacter(player) {
-    let index = players.indexOf(player);
+    let index = playersDom.indexOf(player);
     playerOptions[index] = "";
     addPlayer();
     player.src = "../img/characters/placeholder.png";
@@ -195,7 +195,7 @@ function characterScroll(player, direction = 1) {
 
 
 
-    let index = players.indexOf(player);
+    let index = playersDom.indexOf(player);
     let currentCharacter = playerOptions[index];
 
     addPlayer();
@@ -218,7 +218,7 @@ function characterScroll(player, direction = 1) {
 
 
 function showCharacterByName(player, character) {
-    const index = players.indexOf(player);
+    const index = playersDom.indexOf(player);
     const control = controls[index];
 
     switch (character) {
@@ -271,3 +271,12 @@ function canStartGame() {
     }
 
 }
+
+
+document.getElementById("gameModeNormal").addEventListener("click", (e) => {
+    document.getElementById("gameModeNormal").style.color = "yellow"
+})
+
+document.getElementById("MapOneLevel").addEventListener("click", (e) => {
+    document.getElementById("MapOneLevel").style.border = "1px solid yellow"
+})
