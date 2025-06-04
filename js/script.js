@@ -478,7 +478,7 @@ class mapOne extends BaseScene {
         // Add time to whoever is "it"
         for (let i = 0; i < players.length; i++) {
             if (itPlayer === `player${i + 1}`) {
-                if (itTimers[i] >= 1000) {
+                if (itTimers[i] >= 30000) {
                     eliminatePlayer(i);
                     return;
                 }
