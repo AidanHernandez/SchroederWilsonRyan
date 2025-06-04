@@ -1,5 +1,5 @@
 
-
+var playerTut;
 var playerOne;
 var stars;
 var bombs;
@@ -31,115 +31,105 @@ let jumpTimer = 0;
 let GRAVITY = 1500;
 let itPlayer = '';
 
+let itTimer1 = 0;
+let itTimer2 = 0;
+let itText1, itText2;
+
+
 let tagCooldown = 1000;
 let lastTagTime = 0;
 
-
+let playerNumber = ["", "", "", ""];
 
 const JUMP_VELOCITY = -750;
 const COYOTE_TIME = 100;
 const JUMP_BUFFER_TIME = 100;
-const maxJumpTime = 300;
-const jumpForce = -35;
-const FIRST_JUMP_VELOCITY = -200;
+const maxJumpTime = 0;
+const jumpForce = 0;
+const FIRST_JUMP_VELOCITY = -1000;
 
-let playerState1 = {
+const playerState1 = {
     isJumping: false,
-    coyoteTimer: 0,
-    jumpBufferTimer: 0,
-    jumpTimer: 0
+    jumpStartTime: 0,
+    lastOnGroundTime: 0,
+    lastJumpPressTime: 0,
 };
 
-let playerState2 = {
+const playerState2 = {
     isJumping: false,
-    coyoteTimer: 0,
-    jumpBufferTimer: 0,
-    jumpTimer: 0
+    jumpStartTime: 0,
+    lastOnGroundTime: 0,
+    lastJumpPressTime: 0,
 };
 
 
 // Helper function (can be inside or outside BaseScene)
-function handlePlayerMovement(player, input, delta, state) {
+function handlePlayerMovement(player, input, state, scene) {
     const onGround = player.body.touching.down;
+    const now = scene.time.now;
 
-    // Horizontal Movement
-    // Horizontal Movement
-    let speed = (itPlayer === 'player1' && player === playerOne) || (itPlayer === 'player2' && player === player2)
-        ? 400  // "It" player moves faster
-        : 300;
+    const COYOTE_TIME = 100;
+    const JUMP_BUFFER_TIME = 100;
+    const FAST_FALL_GRAVITY = 1600;
+    const NORMAL_GRAVITY = 1000;
+    const JUMP_CUT_MULTIPLIER = 0.5;
 
+    const speed = (itPlayer === 'player1' && player === playerOne) || (itPlayer === 'player2' && player === player2)
+        ? 400 : 300;
+
+    // Track grounded time
+    if (onGround) {
+        state.lastOnGroundTime = now;
+    }
+
+    // Horizontal movement
     if (input.left.isDown) {
         player.setVelocityX(-speed);
-        player.anims.play('left', true);
+        // player.anims.play('left', true);
     } else if (input.right.isDown) {
         player.setVelocityX(speed);
-        player.anims.play('right', true);
+        // player.anims.play('right', true);
     } else {
         player.setVelocityX(0);
-        player.anims.play('turn');
+        // player.anims.play('turn');
     }
 
-
-
-    // Horizontal Movement
-    // if (input.left.isDown) {
-    //     player.setVelocityX(-300);
-    //     player.anims.play('left', true);
-    // } else if (input.right.isDown) {
-    //     player.setVelocityX(300);
-    //     player.anims.play('right', true);
-    // } else {
-    //     player.setVelocityX(0);
-    //     player.anims.play('turn');
-    // }
-
-    // // Coyote Time
-    // if (onGround) {
-    //     state.coyoteTimer = COYOTE_TIME;
-    // } else {
-    //     state.coyoteTimer -= delta;
-    // }
-
-    // Jump Buffering
+    // Jump buffer
     if (Phaser.Input.Keyboard.JustDown(input.up)) {
-        state.jumpBufferTimer = JUMP_BUFFER_TIME;
-    } else {
-        state.jumpBufferTimer -= delta;
+        state.lastJumpPressTime = now;
     }
 
-    // Jump
+    const canJump = onGround || (now - state.lastOnGroundTime <= COYOTE_TIME);
+    const bufferedJump = now - state.lastJumpPressTime <= JUMP_BUFFER_TIME;
 
-    // && state.coyoteTimer > 0
-
-    if (state.jumpBufferTimer > 0 ) {
-        player.setVelocityY(FIRST_JUMP_VELOCITY);
+    if (bufferedJump && canJump) {
+        player.setVelocityY(FIRST_JUMP_VELOCITY);  // should be negative, e.g., -500
         state.isJumping = true;
-        state.jumpBufferTimer = 0;
-        // state.coyoteTimer = 0;
-        state.jumpTimer = 0;
+        state.lastJumpPressTime = 0;
     }
 
-    // Hold to jump higher
-    if (state.isJumping && input.up.isDown) {
-        if (state.jumpTimer < maxJumpTime) {
-            player.setVelocityY(player.body.velocity.y + jumpForce);
-            state.jumpTimer += delta;
-        } else {
-            state.isJumping = false;
-        }
-    }
-
-    // Variable jump height (on release)
+    // Variable jump height — cut jump if key released
     if (state.isJumping && input.up.isUp && player.body.velocity.y < 0) {
-        player.setVelocityY(player.body.velocity.y * 0.5);
+        player.setVelocityY(player.body.velocity.y * JUMP_CUT_MULTIPLIER);
         state.isJumping = false;
     }
 
-    // Reset jump state when grounded
+    // Fast fall — increase gravity if falling
+    if (player.body.velocity.y > 0) {
+        player.body.setGravityY(FAST_FALL_GRAVITY);
+    } else {
+        player.body.setGravityY(NORMAL_GRAVITY);
+    }
+
+    // Reset jump state
     if (onGround && player.body.velocity.y >= 0) {
         state.isJumping = false;
     }
 }
+
+
+
+
 
 //  Base scene with shared update logic
 class BaseScene extends Phaser.Scene {
@@ -147,57 +137,57 @@ class BaseScene extends Phaser.Scene {
         super(key);
     }
 
-    update(time, delta) {
+    update() {
         if (cursorUse) {
-            // Handle Player 1 input and jumping
-            handlePlayerMovement(playerOne, cursors, delta, playerState1);
-
-            // Handle Player 2 input and jumping
-            handlePlayerMovement(player2, wasdPLayer, delta, playerState2);
+            GRAVITY = 1500;
+            this.physics.world.gravity.y = GRAVITY;
+            handlePlayerMovement(playerOne, cursors, playerState1, this);
+            handlePlayerMovement(player2, wasdPLayer, playerState2, this);
 
         } else if (cursorUse === false) {
             // Your scripted intro behavior (unchanged)
             GRAVITY = 200;
-            if (step === 1 && playerOne.y === 929) {
-                playerOne.setVelocityX(-160);
-                playerOne.anims.play('left', true);
-                if (playerOne.x <= 626) {
-                    playerOne.setVelocityY(-330);
+            this.physics.world.gravity.y = GRAVITY;
+            if (step === 1 && playerTut.y === 929) {
+                playerTut.setVelocityX(-160);
+                playerTut.anims.play('left', true);
+                if (playerTut.x <= 626) {
+                    playerTut.setVelocityY(-330);
                 }
             }
 
-            if (playerOne.y === 675.5 && playerOne.x <= 140 && step === 1) {
+            if (playerTut.y === 675.5 && playerTut.x <= 140 && step === 1) {
                 step = 2;
-                playerOne.setVelocityX(160);
-                playerOne.anims.play('right', true);
+                playerTut.setVelocityX(160);
+                playerTut.anims.play('right', true);
             }
 
-            if (playerOne.x >= 142 && playerOne.y === 675.5 && step === 2) {
-                playerOne.setVelocityY(-360);
+            if (playerTut.x >= 142 && playerTut.y === 675.5 && step === 2) {
+                playerTut.setVelocityY(-360);
             }
 
-            if (playerOne.x >= 839 && step === 2) {
+            if (playerTut.x >= 839 && step === 2) {
                 step = 3;
-                playerOne.setVelocityX(-160);
-                playerOne.anims.play('left', true);
+                playerTut.setVelocityX(-160);
+                playerTut.anims.play('left', true);
             }
 
-            if (playerOne.x <= 17 && step === 3) {
-                playerOne.setVelocityX(0);
-                playerOne.setVelocityY(-360);
-                if (playerOne.y <= 696.5) {
-                    playerOne.setVelocityX(160);
-                    playerOne.anims.play('right', true);
+            if (playerTut.x <= 17 && step === 3) {
+                playerTut.setVelocityX(0);
+                playerTut.setVelocityY(-360);
+                if (playerTut.y <= 696.5) {
+                    playerTut.setVelocityX(160);
+                    playerTut.anims.play('right', true);
                     step = 4;
                 }
             }
 
-            if (playerOne.x === 992 && step === 4 && playerOne.y === 929) {
+            if (playerTut.x === 992 && step === 4 && playerTut.y === 929) {
                 step = 1;
             }
 
-            if (playerOne.body.velocity.x === 0) {
-                playerOne.anims.play('turn');
+            if (playerTut.body.velocity.x === 0) {
+                playerTut.anims.play('turn');
             }
         }
     }
@@ -206,7 +196,7 @@ class BaseScene extends Phaser.Scene {
     createPhysicsRect(x, y, width, height, color) {
         const rect = this.add.rectangle(x, y, width, height, color);
         this.physics.add.existing(rect, true);
-        this.physics.add.collider(playerOne, rect);
+        this.physics.add.collider(playerTut, rect);
         return rect;
     }
 }
@@ -229,8 +219,8 @@ class StartMenu extends BaseScene {
         platforms = this.physics.add.staticGroup();
         platforms.create(505, 1018 - 50, 'ground')
 
-        playerOne = this.physics.add.sprite(2048, 929, 'dude');
-        playerOne.setCollideWorldBounds(true);
+        playerTut = this.physics.add.sprite(2048, 929, 'dude');
+        playerTut.setCollideWorldBounds(true);
 
         this.anims.create({
             key: 'left',
@@ -258,7 +248,7 @@ class StartMenu extends BaseScene {
 
         cursorUse = false
 
-        this.physics.add.collider(playerOne, platforms);
+        this.physics.add.collider(playerTut, platforms);
     }
 }
 
@@ -342,7 +332,14 @@ class mapOne extends BaseScene {
         this.load.image('startMenu', '../img/bgHome.png');
         this.load.image('ground', '../img/top.svg');
         this.load.image('bounce', '../img/bouncePad.svg');
-        this.load.spritesheet('dude', '../phaser3-tutorial-src/assets/dude.png', { frameWidth: 32, frameHeight: 48 });
+
+
+        this.load.image('thimble', '../img/characters/thimble.png');
+        this.load.image('tony', '../img/characters/tony.png');
+        this.load.image('basketballGod', '../img/characters/basketBallGod.png');
+        this.load.image('hatsuneMiku', '../img/characters/miku.png');
+        this.load.image('teddie', '../img/characters/teddie.png');
+        // this.load.spritesheet('dude', '../phaser3-tutorial-src/assets/dude.png', { frameWidth: 32, frameHeight: 48 });
     }
 
     create() {
@@ -353,6 +350,8 @@ class mapOne extends BaseScene {
 
         let bouncyPad = this.physics.add.staticGroup();
         bouncyPad.create(400, 950, 'bounce')
+        bouncyPad.create(500, 500, 'bounce')
+        bouncyPad.create(10, 520, 'bounce')
 
 
         bigPlat = this.physics.add.staticGroup();
@@ -374,33 +373,38 @@ class mapOne extends BaseScene {
         platforms.create(505, 1018 - 50, 'ground')
 
 
+        // playerOne = this.physics.add.sprite(0, 800, "thimble");
+        // player2 = this.physics.add.sprite(0, 800, "basketballGod");
+        playerTut = this.physics.add.sprite(500, 800, "dude");
 
-        playerOne = this.physics.add.sprite(2048, 929, 'dude');
+        for (let i = 0; i < playerNumber.length; i++) {
+
+            if (playerNumber[i] === "Online") {
+
+                if (i === 0) {
+                    playerOne = this.physics.add.sprite(100, 800, playerOptions[i]);
+                    playerOne.setScale(0.35);  // Scales the sprite to 50% size
+                } else if (i === 1) {
+                    player2 = this.physics.add.sprite(200, 800, playerOptions[i]);
+                    player2.setScale(0.35);  // Scales the sprite to 50% size
+                } else if (i === 2) {
+                    playerTut = this.physics.add.sprite(300, 800, playerOptions[i]);
+                    playerTut.setName("playerTut");
+                }
+            }
+        }
+
+
+
+
+
         playerOne.setCollideWorldBounds(true);
 
-        player2 = this.physics.add.sprite(2048 - 100, 929, 'dude'); // Slightly offset
+
         player2.setCollideWorldBounds(true);
 
 
-        this.anims.create({
-            key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
-            frameRate: 10,
-            repeat: -1
-        });
 
-        this.anims.create({
-            key: 'turn',
-            frames: [{ key: 'dude', frame: 4 }],
-            frameRate: 20
-        });
-
-        this.anims.create({
-            key: 'right',
-            frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-            frameRate: 10,
-            repeat: -1
-        });
 
         wasdPLayer = this.input.keyboard.addKeys({
             up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -423,8 +427,10 @@ class mapOne extends BaseScene {
         this.physics.add.collider(player2, platSmall);
 
 
-        this.physics.add.collider(playerOne, bouncyPad, () => bouncePlayer(playerOne), null, this);
-        this.physics.add.collider(player2, bouncyPad, () => bouncePlayer(player2), null, this);
+        this.physics.add.collider(playerOne, bouncyPad, (p, pad) => bouncePlayer(p, pad));
+
+        this.physics.add.collider(player2, bouncyPad, (p, pad) => bouncePlayer(p, pad));
+
 
 
 
@@ -435,6 +441,40 @@ class mapOne extends BaseScene {
 
 
 
+        this.physics.add.collider(playerTut, platforms);
+        this.physics.add.collider(playerTut, bigPlat);
+        this.physics.add.collider(playerTut, platSmall);
+
+        this.physics.add.collider(playerTut, platforms);
+        this.physics.add.collider(playerTut, bigPlat);
+        this.physics.add.collider(playerTut, platSmall);
+
+        itText1 = this.add.text(16, 16, 'P1 Time: 0.0s', { fontSize: '24px', fill: '#ffffff' }).setScrollFactor(0);
+        itText2 = this.add.text(16, 48, 'P2 Time: 0.0s', { fontSize: '24px', fill: '#ffffff' }).setScrollFactor(0);
+
+        itTimer1 = 0;
+        itTimer2 = 0;
+
+    }
+
+    update(time, delta) {
+        // Add time to whoever is "it"
+        if (itPlayer === 'player1') {
+            itTimer1 += delta;
+        } else if (itPlayer === 'player2') {
+            itTimer2 += delta;
+        }
+
+        // Update timer text
+        itText1.setText('P1 Time: ' + (itTimer1 / 1000).toFixed(1) + 's');
+        itText2.setText('P2 Time: ' + (itTimer2 / 1000).toFixed(1) + 's');
+
+        // Call your movement logic here if needed
+         if (cursorUse) {
+        this.physics.world.gravity.y = GRAVITY;
+        handlePlayerMovement(playerOne, cursors, playerState1, this);
+        handlePlayerMovement(player2, wasdPLayer, playerState2, this);
+    }
     }
 }
 
@@ -454,7 +494,7 @@ var config = {
         default: 'arcade',
         arcade: {
             gravity: { y: GRAVITY },
-            debug: false
+            debug: true
         }
     },
     scene: [StartMenu, characterSelection, levelSelect, mapOne],
@@ -468,7 +508,7 @@ var game = new Phaser.Game(config);
 function changeScene(name) {
     if (name === "homePage") {
         document.getElementById("homePage").classList.toggle("hide");
-        
+
         game.scene.keys['StartMenu'].scene.start('characterSelection');
 
         game.scene.stop('StartMenu');
@@ -477,10 +517,10 @@ function changeScene(name) {
     }
     else if (name === "mapSelection") {
         document.getElementById("characterSelectMenu").classList.toggle("hide");
-        
+
         game.scene.keys['characterSelection'].scene.start('levelSelect');
         game.scene.stop('characterSelection');
-       
+
         document.getElementById("levelSelect").classList.toggle("show");
 
     }
@@ -491,17 +531,31 @@ function changeScene(name) {
 
         game.scene.stop('levelSelect');
 
+        let playerOptionsLength = 0
+
         for (let i = 0; i < playerOptions.length; i++) {
-            playerOptions = playerOptions.filter(option => option !== "");
+
+            if (!(playerOptions[i] === "")) {
+                playerOptionsLength++
+
+                playerNumber[i] = "Online";
+
+            }
+            else {
+                playerNumber[i] = "";
+            }
+
+
+
         }
 
 
 
-        if (Math.floor(Math.random() * playerOptions.length) === 0) {
-            itPlayer = 'player1'
-        }
-        else if (Math.floor(Math.random() * playerOptions.length) === 1) {
-            itPlayer = 'Player 2'
+        const randomIndex = Math.floor(Math.random() * playerOptionsLength);
+        if (randomIndex === 0) {
+            itPlayer = 'player1';
+        } else {
+            itPlayer = 'player2';
         }
 
     }
@@ -541,6 +595,9 @@ function tagged(p1, p2) {
 
 }
 
-function bouncePlayer(player) {
-    player.setVelocityY(-800); // Adjust this value to control bounce strength
+function bouncePlayer(player, pad) {
+    const touchingDown = player.body.touching.down || player.body.blocked.down;
+    if (touchingDown) {
+        player.setVelocityY(-1540);
+    }
 }

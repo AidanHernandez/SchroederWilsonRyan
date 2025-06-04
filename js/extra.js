@@ -30,6 +30,9 @@ let characters = [
 ]
 
 let playerOptions = ["sd", "sad", "", ""];
+
+
+
 let playerIndexes = [0, 0, 0, 0];
 
 
